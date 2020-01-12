@@ -1,0 +1,22 @@
+{
+    "user_list": [
+        {
+            "userID": 1,
+            "name": "topic",
+            "surname": "rest",
+            "email": "bajs@bajsmail.com"
+        },
+        {
+            "userID": 2,
+            "name": "herrblo",
+            "surname": "jsd",
+            "email(s)": "bajs2@bajsmail.com"
+        },
+        {
+            "userID": 4,
+            "name": "herrblo",
+            "surname": "jsd",
+            "email": "bajs4@bajsmail.com"
+        }
+    ]
+}
