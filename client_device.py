@@ -5,10 +5,10 @@ import json
 import time
 class device(object):
 
-    def __init__(self, DeviceID, Topic, REST, Resource):
+    def __init__(self, DeviceID, Topic, RESTServer, Resource):
         self.deviceID=DeviceID
         self.topic=Topic
-        self.rest=REST
+        self.rest_server=RESTServer
         self.resource=Resource
         #Timestamp managed by the Catalog
 
@@ -20,22 +20,22 @@ class device(object):
         
 
         #Check if device is registerd in catalog. If not, add it.
-        getURL='http://localhost:8080/get_device_by_ID/'+str(self.deviceID)
+        getURL=self.rest_server+'/get_device_by_ID/'+str(self.deviceID)
         response=requests.get(getURL)
         print(response.text)
         if str(response.text)=="Not found":
             #add device
-            requests.put('http://localhost:8080', json={"command": "new device","DeviceID": self.deviceID ,"Topic": self.topic,"REST": self.rest ,"Resource": self.resource})
+            requests.put(self.rest_server, json={"command": "new device","DeviceID": self.deviceID ,"Topic": self.topic,"REST": self.rest_server ,"Resource": self.resource})
             print("ADDED")
         else:
             #Maybe add some verification here todo
             #refresh device
-            requests.put('http://localhost:8080', json={"command": "refresh device","DeviceID": self.deviceID})
+            requests.put(self.rest_server, json={"command": "refresh device","DeviceID": self.deviceID})
             print("REFRESHED")
     
             
 if __name__ == '__main__':
     #create device
-    dev=device(3,"testtopic","localhost/8080","")
+    dev=device(3,"testtopic","http://localhost:8080","")
     #cleaning service
     dev.clean()
