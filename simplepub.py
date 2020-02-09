@@ -25,7 +25,7 @@ class Simplepub:
     def publish(self,topic,message):
         #publish message to topic
         self._paho_mqtt.publish(topic,message,2) 
-        print("Publishing :"+message+" Topic: "+topic)
+        print("Publishing :"+str(message)+" Topic: "+topic)
 
     def myOnconnect(self, paho_mqtt,userdata,flags,rc):
 

@@ -10,7 +10,7 @@ import time
 thsensor=Adafruit_DHT.DHT11
 # Set GPIO sensor is connected to
 thsensor_gpio=17
-device_ID=1337
+device_ID="raspberry"
 mqtt_topic="sensors"
 rest_server="http://localhost:8080"
 
