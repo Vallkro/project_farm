@@ -43,6 +43,8 @@ class Catalog(object):
                     operand += uri[key]+" "
 
                 i += 1
+        elif len(uri)==0:
+            return "Project farm homepage"
 
         user_input = uri[0]  # search by uri0
         print(f" OPS :{ops}")
@@ -177,6 +179,7 @@ if __name__ == '__main__':
             'tool.session.on': True
         }
     }
+    cherrypy.server.socket_host = '0.0.0.0' ## Needed for acess (?)
     cherrypy.tree.mount(Catalog(), '/', conf)
     cherrypy.engine.start()
     cherrypy.engine.block()

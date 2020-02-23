@@ -2,6 +2,7 @@ import Adafruit_DHT
 import RPi.GPIO as GPIO
 import time
 import threading
+import math
 
 
 # From other classes
@@ -61,6 +62,7 @@ class Device_Connector(object):
                 self.simpub.publish(self.mqtt_topic+"/humidity", humidity)
             else:
                 print('Failed to get reading of temp or humidity')
+
     
     def stop(self):
         self.simpub.stop()

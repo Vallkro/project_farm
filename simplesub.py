@@ -11,6 +11,7 @@ class MySubscriber:
 			self._paho_mqtt.on_message = self.myOnMessageReceived
 			self.topic = topic
 			self.messageBroker =broker 
+			self.lastmessage=None
 
 		def start (self):
 			#manage connection to broker
@@ -29,12 +30,13 @@ class MySubscriber:
 
 		def myOnMessageReceived (self, paho_mqtt , userdata, msg):
 			# A new message is received
+			self.lastmessage=msg
 			print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
 
 
 if __name__=="__main__":
 
-    ss=MySubscriber("Toan","bajstopic",'mqtt.eclipse.org')
+    ss=MySubscriber("Toan","sensors/temperature",'mqtt.eclipse.org')
     ss.start()
     while True:
         time.sleep(1)
