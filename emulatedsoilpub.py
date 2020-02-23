@@ -32,12 +32,14 @@ deviceID = "soilemulator"
 mqtt_topic = "sensors"
 restServer = "http://localhost:8080"
 broker='mqtt.eclipse.org'
+port=1883
 tempsub=MySubscriber(deviceID,mqtt_topic+"/temperature",broker)
 tempsub.start()
 humsub=MySubscriber(deviceID,mqtt_topic+"/humidity",broker)
 humsub.start()
 flowsub=MySubscriber(deviceID,"watering_topic",broker)
 flowsub.start()
+pub=Simplepub(deviceID,broker,port)
 
 def publishnewdata():
     global soilmoist
@@ -58,6 +60,7 @@ def publishnewdata():
             flow="no_flow"
             
     Q=0
+    flow="high_flow"
     if flow=="no_flow":
         Q=0
     elif flow=="low_flow":
@@ -74,7 +77,8 @@ def publishnewdata():
     #Calc soil humidity
     soilmoist=soilmoist+Q*freq -E*freq
     moist=soilmoist/(soildry+soilmoist)
-    print(moist)
+    pub.publish(mqtt_topic+"/soilhumidity",moist)
+    
 
 
 publishnewdata()
