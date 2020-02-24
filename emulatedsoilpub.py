@@ -80,7 +80,7 @@ def publishnewdata():
     pub.publish(mqtt_topic+"/soilhumidity",moist)
     
 
-
+pub.start()
 publishnewdata()
 
     
