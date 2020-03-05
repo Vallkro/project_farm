@@ -108,8 +108,9 @@ if __name__ == "__main__":
     dc=Device_Connector(deviceID,broker,mqtt_topic,restServer,2)
     dc.start()
     dc.start_publish()
+    dc.clean()
 
-    time.sleep(20)
+    time.sleep(20) ## only for testing purp, delete when rdy, todo
     dc.stop()
 
     
