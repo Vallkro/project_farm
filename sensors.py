@@ -1,7 +1,7 @@
 import Adafruit_DHT
 import RPi.GPIO as GPIO
 import time
-
+############################################ ONLY FOR TESTING PURPOSES#####################################
 # From other classes
 from client_device import device
 from simplepub import Simplepub

@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     deviceID = "raspberry"
     mqtt_topic = "sensors"
-    restServer = "http://localhost:8080"
+    restServer = "http://192.168.1.10:8080"
     broker='mqtt.eclipse.org'
     dc=Device_Connector(deviceID,broker,mqtt_topic,restServer,2)
     dc.start()

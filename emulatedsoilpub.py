@@ -22,7 +22,7 @@ psi=-0.05
 #Specific humidity
 q=3.5/100000
 
-soildry=1
+soildry=4
 # Start value
 soilmoist=0.1
 freq=2

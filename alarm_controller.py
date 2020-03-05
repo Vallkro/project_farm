@@ -6,11 +6,14 @@
 # The alarm controller component subscribed to the temperature and motion topics to the message broker.
 # The alarm are send to the data collector thanks to the alarm topic (MQTT)
 
+from simplepub import Simplepub
+
 import json as js
 import datetime
 import requests
 import threading
 import paho.mqtt.client as PahoMQTT
+
 
 class Alarm_communication:
     def __init__(self, clientID, deviceID, topics, broker, RESTServer, temperature_threshold = 35):
@@ -30,6 +33,8 @@ class Alarm_communication:
         self.alarm_topic = topics[2]
         self.messageBroker = broker
         self.rest_server = RESTServer
+        self.pub=Simplepub(self.deviceID,broker,1883)
+        self.pub.start()
 
     def start(self):
         # manage connection to broker
@@ -40,6 +45,7 @@ class Alarm_communication:
         self._paho_mqtt.subscribe(self.motion_topic, 2)
 
     def stop(self):
+        self.pub.stop()
         self._paho_mqtt.unsubscribe(self.temperature_topic)
         self._paho_mqtt.unsubscribe(self.motion_topic)
         self._paho_mqtt.loop_stop()
@@ -52,23 +58,37 @@ class Alarm_communication:
     # It will not do anything to modify the behavior of the system when those alarms occur
     def myOnMessageReceived(self, paho_mqtt, userdata, msg):
         # A new message is received
+        msg.payload = msg.payload.decode("utf-8")
         print("Topic:'" + msg.topic + "', QoS: '" + str(msg.qos) + "' Message: '" + str(msg.payload) + "'")
-
+        time_now=str(datetime.datetime.now()) ## workaround
         # Verify if the message is related to the motion topic and if it's indicate a movement
-        if (msg.topic == "motion" and str(msg.payload) == "True"):
+        if (msg.topic == self.motion_topic and str(msg.payload) == "True"):
+            print("ALARM!!!!")
             # Publish a message under the alarm topic indicating the nature of the alarm and the time at which it happens
-            self.myPublish(self.alarm_topic, js.dumps({"nature": "motion", "time": datetime.datetime.now()}))
+            alarm_message = {"nature":"motion",
+                        "time": time_now}
+            self.pub.publish(self.alarm_topic,str(alarm_message))
+            
+            #self.myPublish(self.alarm_topic, js.dumps({"nature": "motion", "time": datetime.datetime.now()}))
             print("Message published")
 
+        
         # Verify of the message is related to the temperature topic and if the indicated temperature is above the threshold
-        if (msg.topic == "Temperature" and int(msg.payload) >= self.temp_thresh):
+        if (msg.topic == self.temperature_topic and float(msg.payload) >= float(self.temp_thresh)):
+            print("TEMPERATURE_ALARM!!!")
+            
             # Publish a message under the alarm topic indicating the nature of the alarm and the time at which it happens
-            self.myPublish(self.alarm_topic, js.dumps({"nature": "Temperature", "time": datetime.datetime.now()}))
+            
+            tempalarm_message={"nature": "Temperature","Value": str(msg.payload), "time": time_now}
+            #self.myPublish(self.alarm_topic, js.dumps({"nature": "Temperature", "time": datetime.datetime.now()}))
+            self.pub.publish(self.alarm_topic,str(tempalarm_message))
+
             print("Message published")
 
     def myPublish(self, topic, msg):
         # publish a message with a certain topic
         self._paho_mqtt.publish(topic, msg, 2)
+        print("Publishing : "+ str(msg))
 
     def clean(self):
         # used for clean up devices with longer timestamp than 2 mins
@@ -78,23 +98,23 @@ class Alarm_communication:
         # Check if device is registerd in catalog. If not, add it.
         getURL = self.rest_server + '/get_device_by_ID/' + str(self.deviceID)
         response = requests.get(getURL)
-        print(response.text)
+        #print(response.text)
         if str(response.text) == "Not found":
             # add device
             requests.put(self.rest_server, json={"command": "new device", "DeviceID": self.deviceID, "Topics": [self.temperature_topic, self.motion_topic, self.alarm_topic]})
-            print("ADDED")
+            #print("ADDED")
         else:
             # Maybe add some verification here todo
             # refresh device
             requests.put(self.rest_server, json={"command": "refresh device", "DeviceID": self.deviceID})
-            print("REFRESHED")
+            #print("REFRESHED")
 
 if __name__ == '__main__':
 
     clientID = "AlarmController"
-    deviceID = 1
-    topics = ["Temperatue", "Motion", "alarm"]
-    RESTServer = "http://localhost:8080"
+    deviceID = "AlarmController"
+    topics = ["sensors/temperature", "sensors/motion", "sensors/alarm"]
+    RESTServer = "http://192.168.1.10:8080"
     broker = "mqtt.eclipse.org"
 
     print("Indicate a threshold value for the temperature (the default value is 35°C)")
@@ -103,9 +123,3 @@ if __name__ == '__main__':
     alarm = Alarm_communication(clientID, deviceID, topics, broker, RESTServer, temperature)
     alarm.start()
     alarm.clean()
-
-    while True:
-        pass
-        print("Currently working")
-
-    alarm.stop()

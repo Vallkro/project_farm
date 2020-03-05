@@ -44,7 +44,7 @@ class Catalog(object):
 
                 i += 1
         elif len(uri)==0:
-            return "Project farm homepage"
+            return "Project farm homepage use : \n /messagebroker \n /port \n /get_devices \n /get_device_by_ID \n /get_users \n /get_user_by_ID"
 
         user_input = uri[0]  # search by uri0
         print(f" OPS :{ops}")

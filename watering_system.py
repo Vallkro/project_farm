@@ -191,9 +191,9 @@ class WateringSystem_Subscriber:
 if __name__ == '__main__':
     clientID = "wateringSystem"
     deviceID = 2
-    topics = [ "motion", "Temperature", "weather", "sensor/soilhumidity"]
+    topics = [ "sensors/motion", "sensors/temperature", "weather", "sensors/soilhumidity"]
     broker = "mqtt.eclipse.org"
-    RESTServer = "http://localhost:8080"
+    RESTServer = "http://192.168.1.10:8080"
 
     waterin = WateringSystem_Subscriber(clientID, deviceID, topics, broker, RESTServer)
     waterin.start()
@@ -202,5 +202,6 @@ if __name__ == '__main__':
     while True:
         pass
         print("Currently working")
+        time.sleep(3)
 
     waterin.stop()
