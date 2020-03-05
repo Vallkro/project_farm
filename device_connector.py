@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import time
 import threading
 import math
+import requests
 
 
 # From other classes
@@ -19,6 +20,7 @@ class Device_Connector(object):
         self.mqtt_topic = Topic
         self.rest_server = RestServer
         self.broker=Broker
+        self.resource="Temp, humidity and motion sensors"
         # Sensor setup from DHT11 example
         # Init
         # Set sensor type : Options are DHT11,DHT22 or AM2302
@@ -37,6 +39,28 @@ class Device_Connector(object):
         # Create a publisher
         self.simpub = Simplepub(self.device_ID, self.broker, 1883)
         # client ID == device iD for now, just a number i guess (?)
+
+    def clean(self):
+        # used for clean up devices with longer timestamp than 2 mins
+        #right now 2 secs for troubleshooting
+        threading.Timer(2,self.clean).start()
+        # Do the cleaning later
+        
+
+        #Check if device is registerd in catalog. If not, add it.
+        getURL=self.rest_server+'/get_device_by_ID/'+str(self.device_ID)
+        response=requests.get(getURL)
+        print(response.text)
+        if str(response.text)=="Not found":
+            #add device
+            requests.put(self.rest_server, json={"command": "new device","device_ID": self.device_ID ,"Topic": self.mqtt_topic,"REST": self.rest_server ,"Resource": self.resource})
+            print("ADDED")
+        else:
+            #Maybe add some verification here todo
+            #refresh device
+            requests.put(self.rest_server, json={"command": "refresh device","device_ID": self.device_ID})
+            print("REFRESHED")
+
 	
     def start_publish(self):
         if self.run==True:

@@ -10,7 +10,7 @@ class Catalog(object):
     exposed = True
 
     def __init__(self):
-        self.messageBroker = 'localhost'
+        self.messageBroker = 'mqtt.ecliplse.org'
         self.port = 1883
         self.devices = []
         # Load json files

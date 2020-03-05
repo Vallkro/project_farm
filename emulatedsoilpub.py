@@ -3,6 +3,7 @@ from simplesub import MySubscriber
 import time
 import threading
 import math
+import requests
 
 #soil emulation
 #Params
@@ -40,6 +41,8 @@ humsub.start()
 flowsub=MySubscriber(deviceID,"watering_topic",broker)
 flowsub.start()
 pub=Simplepub(deviceID,broker,port)
+
+
 
 def publishnewdata():
     global soilmoist
@@ -84,5 +87,7 @@ pub.start()
 publishnewdata()
 
     
-
+#Publihsing topic sensors/soilhumidity
+#listens to topic watering_topic 
+#and values no_flow, low_flow, high_flow
 
