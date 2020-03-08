@@ -3,7 +3,6 @@ import time
 
 
 class MySubscriber:
-
 		def __init__(self, clientID, topic, broker):
 			self.clientID = clientID
 			# create an instance of paho.mqtt.client
@@ -32,10 +31,12 @@ class MySubscriber:
 
 		def myOnMessageReceived(self, paho_mqtt, userdata, msg):
 			# A new message is received
-			self.lastmessage = msg
-			msg.payload = msg.payload.decode("utf-8")
+			#check to see if the message is from the actual topic
+			if str(msg.topic)==str(self.topic):
+				msg.payload = msg.payload.decode("utf-8")
+				self.lastmessage = msg
 
-			print("Topic:" + msg.topic+", QoS: " +str(msg.qos)+" Message: "+msg.payload)
+				print("Topic:" + msg.topic+", QoS: " +str(msg.qos)+" Message: "+msg.payload)
 
 
 if __name__ == "__main__":
