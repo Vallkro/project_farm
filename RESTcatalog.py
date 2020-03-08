@@ -4,13 +4,19 @@ import json
 import paho.mqtt.client as PahoMQTT
 import time
 import threading
+from os.path import abspath
+import os
+from simplepub import Simplepub
+import socket
+
+
 
 class Catalog(object):
 
     exposed = True
 
     def __init__(self):
-        self.messageBroker = 'mqtt.ecliplse.org'
+        self.messageBroker = 'mqtt.eclipse.org'
         self.port = 1883
         self.devices = []
         # Load json files
@@ -25,6 +31,8 @@ class Catalog(object):
 
 
 
+
+
     def GET(self, *uri, **params):
         #lists to put stuff in 
         ops = []
@@ -33,6 +41,7 @@ class Catalog(object):
         # get uri into a list
         i = 1
         print(f"URI     : {uri}")
+
         if len(uri) > 1:
             for key in range(1, len(uri)):
 
@@ -44,12 +53,13 @@ class Catalog(object):
 
                 i += 1
         elif len(uri)==0:
-            return "Project farm homepage use : \n /messagebroker \n /port \n /get_devices \n /get_device_by_ID \n /get_users \n /get_user_by_ID"
+            return open("freeboard/index.html","r").read()
 
+        
         user_input = uri[0]  # search by uri0
-        print(f" OPS :{ops}")
-        print(operand)
-        # Returns to client
+        ## Possible to delete below by storing global vars in json instead, possible a global json, todo
+        if user_input == "static":
+            return open("freeboard/index.html","r").read()
         if user_input == "messagebroker":
             return json.dumps(self.messageBroker)
 
@@ -94,7 +104,7 @@ class Catalog(object):
 
         print(f" JSON BODY : {list(json_body.values())} \n OPS : {ops} \n COMMAND : {command}")
 
-        
+        #There must be a fancier way of doing this
         if command == "new device":
             newDevice = {}
             newDevice["DeviceID"] = ops[1]
@@ -149,7 +159,7 @@ class Catalog(object):
             response = "Added a new user with ID:"+str(ops[1])
         print(response)
         return json.dumps(response)
-
+    #Not used (?)
     def addDevice(self, ops):
         newDevice = {}
         newDevice["DeviceID"] = ops[1]
@@ -167,19 +177,77 @@ class Catalog(object):
         response = "Added a new device with ID:"+str(ops[1])
         return response
 
+    def POST(self,*uri, **params):
+        
+        #The freeboard function "Save freeboard" sends a POST request with
+        if uri[0]=="saveDashboard":
+            #and the save configs "json_string" as parameters
+            #Overwrite the old dashboard.json with the new 
+            f=open("freeboard/dashboard/dashboard.json","w")
 
+            f.write(params["json_string"])
+            f.close
+
+def publishIp():
+    #Should be in a separe file, but wanted to keep ippublisher running along the Server, to increase flexibility
+    threading.Timer(120,publishIp).start()
+
+        #Get IP and publish it using mqtt
+    hostname = socket.gethostname() 
+    IPAddr = socket.gethostbyname(hostname) 
+    ipPub=Simplepub("Home","mqtt.eclipse.org",1883)
+    ipPub.start()
+    ipPub.publish("SmartFarm/home/ip",IPAddr)
             
 # Not part of catalog class
 if __name__ == '__main__':
-    
+    publishIp() #publish the ip adress of the home server every 2 mins
+
+    FB_PATH = os.getcwd()
+
     #Server stuff
-    conf = {
-        '/': {
+    conf={
+        # The freeboard main page is exposed at the "/" path
+        "/":{
+            # Method dispatcher of the cherrypy library. When an HTTP request is received
+            # the dispatcher merges the request type (GET, POST, etc.) with the relative
+            # method of the WebService() class.
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-            'tool.session.on': True
+            'tools.sessions.on': True,
+            # The directory defined in the FB_PATH variable is taken as static and the
+            # URI path "/" is associated to it
+            'tools.staticdir.root': FB_PATH
+        },
+        # The following lines are the static directories definitions associated to the relative
+        # paths
+        "/css":{
+            'tools.staticdir.on':True,
+            'tools.staticdir.dir':"freeboard/css"
+        },
+        "/js":{
+            'tools.staticdir.on':True,
+            'tools.staticdir.dir':"freeboard/js"
+        },
+        "/img":{
+            'tools.staticdir.on':True,
+            'tools.staticdir.dir':"freeboard/img"
+        },
+        "/plugins":{
+            'tools.staticdir.on':True,
+            'tools.staticdir.dir':"freeboard/plugins"
+        },
+        "/dashboard":{
+            'tools.staticdir.on':True,
+            'tools.staticdir.dir':"freeboard/dashboard"
         }
     }
-    cherrypy.server.socket_host = '0.0.0.0' ## Needed for acess (?)
-    cherrypy.tree.mount(Catalog(), '/', conf)
+
+    # The WebService() class is exposed at the "/" URI path by using the configuration defined
+    # in the conf variable
+    cherrypy.tree.mount(Catalog(), "/", conf)
+    # WebService() IP and port assignment
+    cherrypy.server.socket_host = "0.0.0.0"
+    cherrypy.server.socket_port = 8080
+    # WebService() starting
     cherrypy.engine.start()
     cherrypy.engine.block()
