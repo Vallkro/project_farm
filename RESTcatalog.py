@@ -28,6 +28,10 @@ class Catalog(object):
         self.devices = json.load(f)
         f.close()
 
+        f=open("data.json","r")
+        self.data=json.load(f)
+        f.close()
+
 
 
 
@@ -91,6 +95,9 @@ class Catalog(object):
 
             if found == False:
                 return"Not found"
+
+        if user_input =="get_data":
+            return open("data.json")
 
         else:
             raise NotImplementedError(" Function does not exist yet. ")
@@ -159,23 +166,6 @@ class Catalog(object):
             response = "Added a new user with ID:"+str(ops[1])
         print(response)
         return json.dumps(response)
-    #Not used (?)
-    def addDevice(self, ops):
-        newDevice = {}
-        newDevice["DeviceID"] = ops[1]
-        newDevice["Topic"] = ops[2]
-        newDevice["Resource"] = ops[3]
-        newDevice["Timestamp"] = time.time()
-
-        # write to file
-        # maybe add a try e case here
-        self.devices["device_list"].append(newDevice)
-        f = open("devices.json", "w")
-        f.write(json.dumps(self.devices))
-        f.close
-
-        response = "Added a new device with ID:"+str(ops[1])
-        return response
 
     def POST(self,*uri, **params):
         

@@ -80,7 +80,8 @@ def publishnewdata():
     #Calc soil humidity
     soilmoist=soilmoist+Q*freq -E*freq
     moist=soilmoist/(soildry+soilmoist)
-    pub.publish(mqtt_topic+"/soilhumidity",moist)
+
+    pub.publish(mqtt_topic+"/soilhumidity",round(moist,3))
     
 
 pub.start()

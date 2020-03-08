@@ -1,6 +1,7 @@
 from simplesub import MySubscriber
 import requests
 import threading
+import json
 
 
 class thingspeakConnector(object):
@@ -45,6 +46,17 @@ class thingspeakConnector(object):
     def run(self):
         #Enter this function every self.updateFreq
         threading.Timer(self.updateFreq,self.run).start()
+        #store data in data.json
+        data={"Temperature":    str(self.tsub.lastmessage.payload),
+              "Humidity":       str(self.hsub.lastmessage.payload),
+              "Soil_humidity":  str(self.shsub.lastmessage.payload),
+              "Motion":         str(self.msub.lastmessage.payload)
+            }
+        
+        f=open("data.json","w")
+        f.write(json.dumps(data))
+        f.close()
+
 
         # get the last messages from subs
         #send to thingspeak
