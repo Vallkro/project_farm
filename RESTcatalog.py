@@ -187,7 +187,7 @@ def publishIp():
     IPAddr = socket.gethostbyname(hostname) 
     ipPub=Simplepub("Home","mqtt.eclipse.org",1883)
     ipPub.start()
-    ipPub.publish("SmartFarm/home/ip",IPAddr)
+    ipPub.publish("polito/01QWRBH/SmartFarm/home/ip",IPAddr)
             
 # Not part of catalog class
 if __name__ == '__main__':
