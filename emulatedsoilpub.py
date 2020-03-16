@@ -49,29 +49,22 @@ def publishnewdata():
     # When true, run this function every freq seconds
     threading.Timer(freq,publishnewdata).start()
     #Air humidity
-    #qa=humsub.lastmessage.payload
-    qa=0.1
+    qa=float(humsub.lastmessage.payload)
+    #qa=0.1
     #wind velo assume const if indoors
     u=0.1
     #Temp
-    Ts=20
-    #Ts=tempsub.lastmessage.payload
+    #Ts=20
+    Ts=int(tempsub.lastmessage.payload)
     #flow
     try:
         flow=flowsub.lastmessage.payload
     except AttributeError:
             flow="no_flow"
-            
     Q=0
-    flow="high_flow"
-    if flow=="no_flow":
-        Q=0
-    elif flow=="low_flow":
-        Q=0.001 #M^3/s
-
-    elif flow=="high_flow":
-        Q=0.002
-
+    if flow != "no_flow":
+        Q=float(flowsub.lastmessage.payload)      
+    
     #Specific humidity
     h=math.exp(psi*g/(Rw*Ts))
     #Evap rate

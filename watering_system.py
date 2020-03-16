@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+
 # Code of the watering system module.
 # The module receive information about the weather and different sensor of the raspberry pie board (3 topics)
 # from a message broker using MQTT communication.
@@ -17,12 +17,13 @@ import requests
 import time
 import threading
 import paho.mqtt.client as PahoMQTT
+from simplepub import Simplepub
 
 class WateringSystem_Management:
     def __init__(self):
         self.watering_lvl_values = [0, 1, 2, 3]
         self.watering_lvl_nextday = [2, 2, 2, 2, 2, 2, 2, 2]
-        self.watering_lvl_output=0 ##Couldnt init a variable w/o value in Linux, there is some other way to do it, todo
+        self.watering_level_output=0 ##Couldnt init a variable w/o value in Linux, there is some other way to do it, todo
 
         self.important_precipitation = 7
         self.medium_precipitation = 5
@@ -31,6 +32,11 @@ class WateringSystem_Management:
         self.tmp_threshold = 25 #C
         self.low_soilhumidity = 20 # kind of percentage
         self.high_soilhumidity = 80 # kind of percentage
+
+        #Init a publisher
+        self.pub=Simplepub("Watering_system","mqtt.eclipse.org",1883)
+        self.pub.start()
+
 
     def verify_precipitation_lvl(self, value_to_check):
         if (value_to_check > self.important_precipitation):
@@ -88,6 +94,11 @@ class WateringSystem_Management:
             self.watering_level_output = self.watering_lvl_nextday[i]
             time.sleep(10800) # 3 hours = 10 800 second
 
+    def publish_waterflow(self):
+        threading.Timer(2, self.publish_waterflow).start()
+        self.pub.publish("polito/01QWRBH/SmartFarm/device1/outputs/waterflow",self.watering_level_output)
+
+
 
 
 
@@ -124,6 +135,7 @@ class WateringSystem_Subscriber:
         self._paho_mqtt.subscribe(self.soilhumidity_topic, 2)
         # create an object that manage the water flow
         self.watering_controler = WateringSystem_Management()
+        self.watering_controler.publish_waterflow()
 
     def stop(self):
         self._paho_mqtt.unsubscribe(self.motion_topic)
@@ -170,7 +182,7 @@ class WateringSystem_Subscriber:
     def clean(self):
         # used for clean up devices with longer timestamp than 2 mins
         # right now 2 secs for troubleshooting
-        threading.Timer(2, self.clean).start()
+        threading.Timer(10, self.clean).start()
 
         # Check if device is registerd in catalog. If not, add it.
         getURL = self.rest_server + '/get_device_by_ID/' + str(self.deviceID)
@@ -184,20 +196,23 @@ class WateringSystem_Subscriber:
             # Maybe add some verification here todo
             # refresh device
             requests.put(self.rest_server, json={"command": "refresh device", "DeviceID": self.deviceID})
-            print("REFRESHED")
+            print("Refreshed "+self.clientID)
 
 
 
 if __name__ == '__main__':
     clientID = "wateringSystem"
-    deviceID = 2
-    topics = [ "sensors/motion", "sensors/temperature", "weather", "sensors/soilhumidity"]
+    deviceID = 1
+    topics = [ "polito/01QWRBH/SmartFarm/device1/sensors/motion", "polito/01QWRBH/SmartFarm/device1/sensors/temperature", "polito/01QWRBH/SmartFarm/weatherForecast", "polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity"]
     broker = "mqtt.eclipse.org"
-    RESTServer = "http://192.168.1.10:8080"
+    RESTServer = "http://localhost:8080"
 
     waterin = WateringSystem_Subscriber(clientID, deviceID, topics, broker, RESTServer)
     waterin.start()
     waterin.clean()
+
+    
+
 
     while True:
         pass
