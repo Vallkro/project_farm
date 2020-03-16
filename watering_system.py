@@ -187,7 +187,7 @@ class WateringSystem_Subscriber:
         # Check if device is registerd in catalog. If not, add it.
         getURL = self.rest_server + '/get_device_by_ID/' + str(self.deviceID)
         response = requests.get(getURL)
-        print(response.text)
+        #print(response.text)
         if str(response.text) == "Not found":
             # add device
             requests.put(self.rest_server, json={"command": "new device", "DeviceID": self.deviceID, "Topics": [self.motion_topic, self.temperature_topic, self.weather_topic, self.soilhumidity_topic]})

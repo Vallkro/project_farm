@@ -34,11 +34,11 @@ mqtt_topic = "sensors"
 restServer = "http://localhost:8080"
 broker='mqtt.eclipse.org'
 port=1883
-tempsub=MySubscriber(home+deviceID,mqtt_topic+"/temperature",broker)
+tempsub=MySubscriber(deviceID,home+deviceID+mqtt_topic+"/temperature",broker)
 tempsub.start()
-humsub=MySubscriber(home+deviceID,mqtt_topic+"/humidity",broker)
+humsub=MySubscriber(deviceID,home+deviceID+mqtt_topic+"/humidity",broker)
 humsub.start()
-flowsub=MySubscriber(home+deviceID,"outputs/waterflow",broker)
+flowsub=MySubscriber(deviceID,home+deviceID+"/outputs/waterflow",broker)
 flowsub.start()
 pub=Simplepub(deviceID,broker,port)
 

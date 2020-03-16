@@ -47,7 +47,7 @@ class Device_Connector(object):
         #Check if device is registerd in catalog. If not, add it.
         getURL=self.rest_server+'/get_device_by_ID/'+str(self.device_ID)
         response=requests.get(getURL)
-        print(response.text)
+        #print(response.text)
         if str(response.text)=="Not found":
             #add device
             requests.put(self.rest_server, json={"command": "new device","device_ID": self.device_ID ,"Topic": self.mqtt_topic,"REST": self.rest_server ,"Resource": self.resource})
@@ -56,7 +56,7 @@ class Device_Connector(object):
             #Maybe add some verification here todo
             #refresh device
             requests.put(self.rest_server, json={"command": "refresh device","device_ID": self.device_ID})
-            print("REFRESHED")
+            print("Refreshed")
 
 	
     def start_publish(self):

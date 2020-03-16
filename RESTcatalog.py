@@ -44,7 +44,7 @@ class Catalog(object):
 
         # get uri into a list
         i = 1
-        print(f"URI     : {uri}")
+        #print(f"URI     : {uri}")
 
         if len(uri) > 1:
             for key in range(1, len(uri)):
@@ -109,7 +109,7 @@ class Catalog(object):
         command = list(json_body.values())[0]
         response = " "
 
-        print(f" JSON BODY : {list(json_body.values())} \n OPS : {ops} \n COMMAND : {command}")
+        #print(f" JSON BODY : {list(json_body.values())} \n OPS : {ops} \n COMMAND : {command}")
 
         #There must be a fancier way of doing this
         if command == "new device":
