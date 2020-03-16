@@ -95,7 +95,7 @@ class WateringSystem_Management:
             time.sleep(10800) # 3 hours = 10 800 second
 
     def publish_waterflow(self):
-        threading.Timer(2, self.publish_waterflow).start()
+        threading.Timer(5, self.publish_waterflow).start()
         self.pub.publish("polito/01QWRBH/SmartFarm/device1/outputs/waterflow",self.watering_level_output)
 
 
