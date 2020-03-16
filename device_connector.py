@@ -7,6 +7,7 @@ import requests
 
 
 # From other classes
+from client_device import device
 from simplepub import Simplepub
 
 
