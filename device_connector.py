@@ -101,8 +101,8 @@ class Device_Connector(object):
 
 if __name__ == "__main__":
 
-    deviceID = "raspberry"
-    mqtt_topic = "sensors"
+    deviceID = "device1"
+    mqtt_topic = "polito/01QWRBH/SmartFarm/device1/sensors"
     restServer = "http://192.168.1.10:8080"
     broker='mqtt.eclipse.org'
     dc=Device_Connector(deviceID,broker,mqtt_topic,restServer,2)

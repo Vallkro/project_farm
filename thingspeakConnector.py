@@ -94,6 +94,8 @@ class thingspeakConnector(object):
 
         
 if __name__ == "__main__":
-    tsC=thingspeakConnector("thingspeakConnector","sensors/motion","sensors/temperature","sensors/humidity","sensors/soilhumidity","sensors/alarm","localhost:8080","Connects topics to thingspeak")
+    home="polito/01QWRBH/SmartFarm/"
+    device="device1/"
+    tsC=thingspeakConnector("thingspeakConnector",home+device+"sensors/motion",home+device+"sensors/temperature",home+device+"sensors/humidity",home+device+"sensors/soilhumidity",home+device+"sensors/alarm","localhost:8080","Connects topics to thingspeak")
     tsC.run()
 

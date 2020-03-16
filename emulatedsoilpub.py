@@ -28,17 +28,17 @@ soilmoist=0.1
 freq=2
 
 
-
-deviceID = "soilemulator"
+home="polito/01QWRBH/SmartFarm/"
+deviceID = "device1/"
 mqtt_topic = "sensors"
 restServer = "http://localhost:8080"
 broker='mqtt.eclipse.org'
 port=1883
-tempsub=MySubscriber(deviceID,mqtt_topic+"/temperature",broker)
+tempsub=MySubscriber(home+deviceID,mqtt_topic+"/temperature",broker)
 tempsub.start()
-humsub=MySubscriber(deviceID,mqtt_topic+"/humidity",broker)
+humsub=MySubscriber(home+deviceID,mqtt_topic+"/humidity",broker)
 humsub.start()
-flowsub=MySubscriber(deviceID,"watering_topic",broker)
+flowsub=MySubscriber(home+deviceID,"outputs/waterflow",broker)
 flowsub.start()
 pub=Simplepub(deviceID,broker,port)
 
@@ -81,7 +81,7 @@ def publishnewdata():
     soilmoist=soilmoist+Q*freq -E*freq
     moist=soilmoist/(soildry+soilmoist)
 
-    pub.publish(mqtt_topic+"/soilhumidity",round(moist,3))
+    pub.publish(home+deviceID+mqtt_topic+"/soilhumidity",round(moist,3))
     
 
 pub.start()

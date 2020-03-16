@@ -40,9 +40,6 @@ class MySubscriber:
 
 
 if __name__ == "__main__":
-	ss = MySubscriber("Toan", "sensors/temperature", 'mqtt.eclipse.org')
-	sa = MySubscriber("alarma", "sensors/alarm", "mqtt.eclipse.org")
-	sa.start()
-	ss.start()
+
 	while True:
-		time.sleep(1)
+		time.sleep(10)

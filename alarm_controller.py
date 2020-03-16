@@ -113,8 +113,8 @@ if __name__ == '__main__':
 
     clientID = "AlarmController"
     deviceID = "AlarmController"
-    topics = ["sensors/temperature", "sensors/motion", "sensors/alarm"]
-    RESTServer = "http://192.168.1.10:8080"
+    topics = ["polito/01QWRBH/SmartFarm/device1/sensors/temperature", "polito/01QWRBH/SmartFarm/device1/sensors/motion", "polito/01QWRBH/SmartFarm/device1/sensors/alarm"]
+    RESTServer = "http://localhost:8080"
     broker = "mqtt.eclipse.org"
 
     print("Indicate a threshold value for the temperature (the default value is 35°C)")
