@@ -7,7 +7,6 @@ import requests
 
 
 # From other classes
-from client_device import device
 from simplepub import Simplepub
 
 
@@ -33,9 +32,7 @@ class Device_Connector(object):
         # Motion sensor needed some time to initialize
         print("Init...")
         time.sleep(3)
-        # Add the new device
-        self.dev1 = device(self.device_ID, self.mqtt_topic, self.rest_server,
-                      "Temp, humidity and motion")
+
         # Create a publisher
         self.simpub = Simplepub(self.device_ID, self.broker, 1883)
         # client ID == device iD for now, just a number i guess (?)
