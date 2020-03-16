@@ -22,9 +22,9 @@ psi=-0.05
 #Specific humidity
 q=3.5/100000
 
-soildry=4
+soildry=40
 # Start value
-soilmoist=0.1
+soilmoist=20
 freq=2
 
 
@@ -34,11 +34,11 @@ mqtt_topic = "sensors"
 restServer = "http://localhost:8080"
 broker='mqtt.eclipse.org'
 port=1883
-tempsub=MySubscriber(deviceID,home+deviceID+mqtt_topic+"/temperature",broker)
+tempsub=MySubscriber(deviceID,"polito/01QWRBH/SmartFarm/device1/sensors/temperature",broker)
 tempsub.start()
-humsub=MySubscriber(deviceID,home+deviceID+mqtt_topic+"/humidity",broker)
+humsub=MySubscriber(deviceID,"polito/01QWRBH/SmartFarm/device1/sensors/humidity",broker)
 humsub.start()
-flowsub=MySubscriber(deviceID,home+deviceID+"/outputs/waterflow",broker)
+flowsub=MySubscriber(deviceID,"polito/01QWRBH/SmartFarm/device1/outputs/waterflow",broker)
 flowsub.start()
 pub=Simplepub(deviceID,broker,port)
 
@@ -55,7 +55,7 @@ def publishnewdata():
     u=0.1
     #Temp
     #Ts=20
-    Ts=int(tempsub.lastmessage.payload)
+    Ts=float(tempsub.lastmessage.payload)
     #flow
     try:
         flow=flowsub.lastmessage.payload
@@ -71,10 +71,12 @@ def publishnewdata():
     E=pAir*Ce*u*(h-qa)
 
     #Calc soil humidity
-    soilmoist=soilmoist+Q*freq -E*freq
+    soilmoist=soilmoist+Q*freq +E*freq
     moist=soilmoist/(soildry+soilmoist)
+    if moist<0:
+        moist=0
 
-    pub.publish(home+deviceID+mqtt_topic+"/soilhumidity",round(moist,3))
+    pub.publish("polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity",round(moist,3))
     
 
 pub.start()

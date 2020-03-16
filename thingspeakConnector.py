@@ -13,6 +13,7 @@ class thingspeakConnector(object):
         self.htopic=humidityTopic
         self.shtopic=soilhumTopic
         self.atopic=alarmTopic
+        self.flowtopic="polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity" # screen too small
         self.rest_server=RESTServer
         self.resource=Resource
         self.broker="mqtt.eclipse.org"
@@ -32,6 +33,7 @@ class thingspeakConnector(object):
         self.shsub=MySubscriber(self.deviceID,self.shtopic,self.broker)
         self.msub=MySubscriber(self.deviceID, self.mtopic,self.broker)
         self.asub=MySubscriber(self.deviceID, self.atopic,self.broker)
+        self.flowsub=MySubscriber(self.deviceID, self.flowtopic,self.broker)
 
         #start the subscribers
         self.msub.start()
@@ -39,6 +41,7 @@ class thingspeakConnector(object):
         self.hsub.start()
         self.shsub.start()
         self.asub.start()
+        self.flowsub.start()
         #start the cleaning
         #self.clean()
         
@@ -50,7 +53,8 @@ class thingspeakConnector(object):
         data={"Temperature":    str(self.tsub.lastmessage.payload),
               "Humidity":       str(self.hsub.lastmessage.payload),
               "Soil_humidity":  str(self.shsub.lastmessage.payload),
-              "Motion":         str(self.msub.lastmessage.payload)
+              "Motion":         str(self.msub.lastmessage.payload),
+              "Waterflow":      str(self.flowsub.lastmessage.payload)
             }
         
         f=open("data.json","w")
@@ -63,6 +67,8 @@ class thingspeakConnector(object):
         requests.post(self.baseURL+"1="+str(self.tsub.lastmessage.payload))
         requests.post(self.baseURL+"2="+str(self.hsub.lastmessage.payload))
         requests.post(self.baseURL+"3="+str(self.shsub.lastmessage.payload))
+        requests.post(self.baseURL+"6="+str(self.flowsub.lastmessage.payload))
+
         #workaround
         motion="0"
         if str(self.msub.lastmessage.payload)=="True":

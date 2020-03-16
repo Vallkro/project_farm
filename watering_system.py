@@ -30,10 +30,9 @@ class WateringSystem_Management:
         self.sparsely_precipitation = 3
 
         self.tmp_threshold = 25 #C
-        self.low_soilhumidity = 20 # kind of percentage
-        self.high_soilhumidity = 80 # kind of percentage
-
-        #Init a publisher
+        self.low_soilhumidity = 0.4 # value between 0 and 1
+        self.high_soilhumidity = 0.5 # 
+        #https://observant.zendesk.com/hc/en-us/articles/208067926-Monitoring-Soil-Moisture-for-Optimal-Crop-Growth        #Init a publisher
         self.pub=Simplepub("Watering_system","mqtt.eclipse.org",1883)
         self.pub.start()
 
@@ -96,7 +95,7 @@ class WateringSystem_Management:
 
     def publish_waterflow(self):
         threading.Timer(5, self.publish_waterflow).start()
-        self.pub.publish("polito/01QWRBH/SmartFarm/device1/outputs/waterflow",self.watering_level_output)
+        self.pub.publish("polito/01QWRBH/SmartFarm/device1/outputs/waterflow",self.watering_level_output/8)
 
 
 
@@ -150,7 +149,7 @@ class WateringSystem_Subscriber:
 
     def myOnMessageReceived(self, paho_mqtt, userdata, msg):
         # A new message is received
-        print("Topic:'" + msg.topic + "', QoS: '" + str(msg.qos) + "' Message: '" + str(msg.payload) + "'")
+        print("Topic:" + msg.topic +  " Message:" + str(msg.payload))
 
         if (msg.topic == self.motion_topic and str(msg.payload) == "True"):
             t1 = threading.Thread(target=self.watering_controler.stop_water_flow())
@@ -162,13 +161,13 @@ class WateringSystem_Subscriber:
             t1.start()
             t1.join()
 
-        if ((msg.topic == self.temperature_topic and int(msg.payload) > self.watering_controler.tmp_threshold) or
-                (msg.topic == self.soilhumidity_topic and int(msg.payload) <= self.watering_controler.low_soilhumidity)):
+        if ((msg.topic == self.temperature_topic and float(msg.payload) > self.watering_controler.tmp_threshold) or
+                (msg.topic == self.soilhumidity_topic and float(msg.payload) <= self.watering_controler.low_soilhumidity)):
             t1 = threading.Thread(target=self.watering_controler.increase_water_flow())
             t1.start()
             t1.join()
 
-        if (msg.topic == self.soilhumidity_topic and int(msg.payload) >= self.watering_controler.high_soilhumidity):
+        if (msg.topic == self.soilhumidity_topic and float(msg.payload) >= self.watering_controler.high_soilhumidity):
             t1 = threading.Thread(target=self.watering_controler.decrease_water_flow())
             t1.start()
             t1.join()
