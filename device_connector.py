@@ -105,7 +105,7 @@ if __name__ == "__main__":
     mqtt_topic = "polito/01QWRBH/SmartFarm/device1/sensors"
     restServer = "http://192.168.1.10:8080"
     broker='mqtt.eclipse.org'
-    dc=Device_Connector(deviceID,broker,mqtt_topic,restServer,2)
+    dc=Device_Connector(deviceID,broker,mqtt_topic,restServer,5)
     dc.start()
     dc.start_publish()
     dc.clean()
