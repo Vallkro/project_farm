@@ -109,8 +109,8 @@ if __name__ == "__main__":
     dc.start()
     dc.start_publish()
     dc.clean()
-
-    time.sleep(20) ## only for testing purp, delete when rdy, todo
+    while True:
+        time.sleep(20) ## only for testing purp, delete when rdy, todo
     dc.stop()
 
     

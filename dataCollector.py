@@ -62,7 +62,7 @@ class MySubscriber(object):
 		chat_id = update.message.chat_id
 		bot.sendMessage(chat_id,"The soil humidity is: " + self.soil_hume_value + "")
 
-	def water_used(self,bot,update):
+	def water_used_sender(self,bot,update):
 		chat_id = update.message.chat_id
 		bot.sendMessage(chat_id,self.water_used)
 
@@ -102,19 +102,19 @@ class MySubscriber(object):
 				dp.bot.sendMessage(i,str(msg.payload)) #It's sending to telegram the json itself, but we couldn't parse it well 
  
 
-		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/temperature":
+		if msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/temperature":
 			msg.payload = msg.payload.decode("utf-8")
-			#print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
+			print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
 			self.temp_value = str(msg.payload)
 
-		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity": 
+		if msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity": 
 			msg.payload = msg.payload.decode("utf-8")
-			#print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
+			print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
 			self.soil_hume_value = str(msg.payload)
 
-		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/humidity":
+		if msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/humidity":
 			msg.payload = msg.payload.decode("utf-8")
-			#print ('Topic:' + msg.topic+', QoS: '+str(msg.qos)+' Message: '+str(msg.payload))
+			print ('Topic:' + msg.topic+', QoS: '+str(msg.qos)+' Message: '+str(msg.payload))
 			self.hume_value = str(msg.payload)
 
 
@@ -144,7 +144,7 @@ class MySubscriber(object):
 
 if __name__ == "__main__":
 
-	test = MySubscriber("dataCollector","polito/01QWRBH/SmartFarm/+",'mqtt.eclipse.org','http://192.168.1.10:8080','dataCollector') 
+	test = MySubscriber("dataCollector","polito/01QWRBH/SmartFarm/#",'mqtt.eclipse.org','http://192.168.1.10:8080','dataCollector') 
 	#It uses the wild card # to listen to all the topics
 	updater = Updater('1124002256:AAEtMOjpwbQNyFPa-O7Nv0dQiy_kFy_IF1A')
 	dp = updater.dispatcher
