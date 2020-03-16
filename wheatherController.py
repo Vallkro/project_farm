@@ -42,7 +42,7 @@ class MyPublisher(object):
 	def clean(self):
 	# used for clean up devices with longer timestamp than 2 mins
 		#right now 2 secs for troubleshooting
-		threading.Timer(2,self.clean).start()
+		threading 	.Timer(2,self.clean).start()
 			# Do the cleaning later
 	
 
@@ -62,7 +62,7 @@ class MyPublisher(object):
 
 if __name__ == '__main__':
 
-	weather = MyPublisher("WeatherPublisher","DeviceID","weather","http://localhost:8080","weather")
+	weather = MyPublisher("WeatherPublisher","DeviceID","polito/01QWRBH/SmartFarm/weatherForecast","http://localhost:8080","weather")
 	weather.start()
 
 	periodic = False
@@ -98,9 +98,18 @@ if __name__ == '__main__':
 			#so I can test it well 
 			weather.myPublish(daily_rain_string)
 
-			#Deberia dormirse durante el tiempo necesario hasta que llegue a las 12 y así ya manda toda la informacion 
+			#The program should sleep until midnight, when it's time to send the forecast again
 			print("Information sent")
 			time.sleep(3)
+
+			# currentDT = datetime.datetime.now()
+			# hour = currentDT.hour
+			# minute = currentDT.minute
+			# hoursToMidNight = 24 - int(hour) +1
+			# minutesToNextHour = 60 - int(minute)
+			# secondsToMidnight = hoursToMidNight*60*60 + minutesToNextHour*60
+
+			# time.sleep(secondsToMidnight)
 
 			periodic = True
 
@@ -135,6 +144,8 @@ if __name__ == '__main__':
 
 			print("Information sent")
 			time.sleep(3)
+
+			#time.sleep(24*60*60)
 
 		
 
