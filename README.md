@@ -4,20 +4,20 @@
 
 
 
-**RESTcatalog.py       **
+**RESTcatalog.py**
 
 - Home server, uses GET, PUT,POST to send and process data
 - Deploys freeboard
 - Publishes ip using mqtt
 - Stores data in data.json,devices.json,users.json.
 
-**device\_connector.py       **
+**device\_connector.py**
 
 - Must be run on raspberry pi
 - Uses Adafruit\_DHT, RPi.GPIO libraries
 - Reads sensor data, publishes to respective mqtt topics.
 
-**emulatedsoilpub.py       **
+**emulatedsoilpub.py**
 
 - Mqtt publisher and subscriber.
 - Depends on temp, humidity and waterflow.
@@ -26,7 +26,7 @@
 
 - Bare bones publisher, used in RESTcatalog, emulatedsoilpub, device\_connector, watering system
 
-**simplesub.py       **
+**simplesub.py**
 
 - Bare bones subscriber, used in device\_connector, thingspeakConnector,emulatedsoilpub
 
@@ -37,12 +37,12 @@
 - [https://thingspeak.com/channels/1011118](https://thingspeak.com/channels/1011118)
 - saves data to data.json (currently a workaround, but works)
 
-**alarm\_controller.py       **
+**alarm\_controller.py**
 
 - **●●** Mqtt publisher and subscriber
 - **●●** Subscribes to &#39;Motion&#39; and &#39;Temperature&#39; topics data, publishes to &#39;alarm&#39; topic if a movement is detected or temperature too high
 
-**watering\_system.py       **
+**watering\_system.py**
 
 - Mqtt subscriber
 - Subscribes to mqtt topics and controls the waterflow, to keep the soilhumidity at a good level.
@@ -57,7 +57,7 @@
 - connetcs to an external wheater forecast API
 - publishes to wheathertopic
 
-**freeboard       **
+**freeboard**
 
 - Displays Current temperature, humidity, waterflow and soilhumidity.
 - GET requests to home server to get data
