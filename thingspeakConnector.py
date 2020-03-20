@@ -13,7 +13,7 @@ class thingspeakConnector(object):
         self.htopic=humidityTopic
         self.shtopic=soilhumTopic
         self.atopic=alarmTopic
-        self.flowtopic="polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity" # screen too small
+        self.flowtopic="polito/01QWRBH/SmartFarm/device1/outputs/waterflow" # screen too small
         self.rest_server=RESTServer
         self.resource=Resource
         self.broker="mqtt.eclipse.org"

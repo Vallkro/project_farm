@@ -101,7 +101,7 @@ class Alarm_communication:
         #print(response.text)
         if str(response.text) == "Not found":
             # add device
-            requests.put(self.rest_server, json={"command": "new device", "DeviceID": self.deviceID, "Topics": [self.temperature_topic, self.motion_topic, self.alarm_topic]})
+            requests.put(self.rest_server, json={"command": "new device", "DeviceID": self.deviceID, "Topics": [self.temperature_topic, self.motion_topic, self.alarm_topic],"Resource": "Alarm"})
             #print("ADDED")
         else:
             # Maybe add some verification here todo
