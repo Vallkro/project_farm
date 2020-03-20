@@ -24,7 +24,7 @@ class MySubscriber(object):
 		self.temp_value = "<no value>"
 		self.hume_value = "<no value>"
 		self.soil_hume_value = "<no value>"
-		self.water_used = "<no value>"
+		self.waterflow = "<no value>"
 
 		self.rest_server=RESTServer
 		self.resource=Resource
@@ -62,9 +62,9 @@ class MySubscriber(object):
 		chat_id = update.message.chat_id
 		bot.sendMessage(chat_id,"The soil humidity is: " + self.soil_hume_value + "")
 
-	def water_used_sender(self,bot,update):
+	def water_used(self,bot,update):
 		chat_id = update.message.chat_id
-		bot.sendMessage(chat_id,self.water_used)
+		bot.sendMessage(chat_id,"The waterflow is: " + self.waterflow + "")
 
 	def subscribe_to_alarm(self,bot,update):
 		chat_id = str(update.message.chat_id)
@@ -102,20 +102,25 @@ class MySubscriber(object):
 				dp.bot.sendMessage(i,str(msg.payload)) #It's sending to telegram the json itself, but we couldn't parse it well 
  
 
-		if msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/temperature":
+		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/temperature":
 			msg.payload = msg.payload.decode("utf-8")
-			print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
+			#print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
 			self.temp_value = str(msg.payload)
 
-		if msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity": 
+		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/soilhumidity": 
 			msg.payload = msg.payload.decode("utf-8")
-			print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
+			#print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
 			self.soil_hume_value = str(msg.payload)
 
-		if msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/humidity":
+		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/sensors/humidity":
 			msg.payload = msg.payload.decode("utf-8")
-			print ('Topic:' + msg.topic+', QoS: '+str(msg.qos)+' Message: '+str(msg.payload))
+			#print ('Topic:' + msg.topic+', QoS: '+str(msg.qos)+' Message: '+str(msg.payload))
 			self.hume_value = str(msg.payload)
+
+		elif msg.topic == "polito/01QWRBH/SmartFarm/device1/outputs/waterflow":
+			msg.payload = msg.payload.decode("utf-8")
+			#print ('Topic:' + msg.topic+', QoS: '+str(msg.qos)+' Message: '+str(msg.payload))
+			self.waterflow = str(msg.payload)
 
 
 	def clean(self):
@@ -144,7 +149,7 @@ class MySubscriber(object):
 
 if __name__ == "__main__":
 
-	test = MySubscriber("dataCollector","polito/01QWRBH/SmartFarm/#",'mqtt.eclipse.org','http://192.168.1.10:8080','dataCollector') 
+	test = MySubscriber("dataCollector","polito/01QWRBH/SmartFarm/+",'mqtt.eclipse.org','http://192.168.1.10:8080','dataCollector') 
 	#It uses the wild card # to listen to all the topics
 	updater = Updater('1124002256:AAEtMOjpwbQNyFPa-O7Nv0dQiy_kFy_IF1A')
 	dp = updater.dispatcher
@@ -156,7 +161,7 @@ if __name__ == "__main__":
 	dp.add_handler(CommandHandler('temperature',test.temperature))
 	dp.add_handler(CommandHandler('humidity',test.humidity))
 	dp.add_handler(CommandHandler('soil_humidity',test.soil_humidity))
-	#dp.add_handler(CommandHandler('water_used',test.water_used))
+	dp.add_handler(CommandHandler('waterflow',test.water_used))
 	dp.add_handler(CommandHandler('subscribe_to_alarm',test.subscribe_to_alarm))
 	dp.add_handler(CommandHandler('unsubscribe_to_alarm',test.unsubscribe_to_alarm))
 	updater.start_polling()
