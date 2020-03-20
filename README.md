@@ -139,3 +139,5 @@ Float every 5.
 - from telegram.ext import Updater, CommandHandler
 - urllib
 - datetime
+- Adafruit_DHT
+- RPi.GPIO
